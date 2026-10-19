@@ -11,7 +11,7 @@
     var io = new IntersectionObserver(function (en) {
       en.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("seen"); io.unobserve(e.target); } });
     }, { threshold: 0.18 });
-    Array.prototype.forEach.call(document.querySelectorAll(".feat, .browser, .venture, .bcard"), function (el) { io.observe(el); });
+    Array.prototype.forEach.call(document.querySelectorAll(".feat, .browser, .venture, .bcard, .ticket"), function (el) { io.observe(el); });
   }
 
   var slides = document.querySelectorAll("#slides img"), dots = document.querySelectorAll(".dots button"), box = document.querySelector(".dots");
@@ -30,26 +30,58 @@
     start();
   }
 
-  var form = document.getElementById("contact-form");
-  if (form) {
-    var status = document.getElementById("form-status");
+  /* Services page phone: the missed-call text thread plays in when it scrolls into view. */
+  var feed = document.querySelector(".phone-feed");
+  if (feed && !calm && "IntersectionObserver" in window) {
+    document.documentElement.classList.add("js-anim");
+    var items = Array.prototype.slice.call(feed.children);
+    var play = function () {
+      var i = 0;
+      var next = function () {
+        if (i >= items.length) return;
+        var el = items[i++];
+        if (el.classList.contains("out") && i > 1) {
+          var t = document.createElement("p"); t.className = "typing on"; t.innerHTML = "<i></i><i></i><i></i>";
+          t.style.top = el.offsetTop + "px"; feed.appendChild(t);
+          setTimeout(function () { feed.removeChild(t); el.classList.add("on"); setTimeout(next, 900); }, 900);
+        } else { el.classList.add("on"); setTimeout(next, i === 1 ? 700 : 1100); }
+      };
+      next();
+    };
+    var po = new IntersectionObserver(function (en) { if (en[0].isIntersecting) { po.disconnect(); play(); } }, { threshold: 0.4 });
+    po.observe(feed);
+  }
+
+  /* Forms: Formspree when an ID is set, otherwise the visitor's email app. */
+  var labels = { name: "Name", business: "Business", phone: "Phone", email: "Email", need: "Needs help with", message: "Message", text_consent: "Agreed to texts" };
+  Array.prototype.forEach.call(document.querySelectorAll("form.js-form"), function (form) {
+    var status = form.querySelector(".form-status");
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       if (!form.checkValidity()) { form.reportValidity(); return; }
       if (form.elements.company.value) return;
-      var d = { name: form.elements.name.value, email: form.elements.email.value, phone: form.elements.phone.value, message: form.elements.message.value };
+      var d = {};
+      Array.prototype.forEach.call(form.elements, function (el) {
+        if (!el.name || el.name === "company") return;
+        if (el.type === "checkbox") d[el.name] = el.checked ? "Yes" : "No";
+        else d[el.name] = el.value;
+      });
+      var subject = form.getAttribute("data-subject") + " from " + (d.business || d.name);
       if (CONFIG.formspreeId) {
+        status.className = "form-status";
         status.textContent = "Sending…";
+        d._subject = subject;
         fetch("https://formspree.io/f/" + CONFIG.formspreeId, { method: "POST", headers: { "Accept": "application/json", "Content-Type": "application/json" }, body: JSON.stringify(d) })
           .then(function (r) { if (!r.ok) throw 0; form.reset(); status.className = "form-status ok"; status.textContent = "Message Sent"; })
           .catch(function () { status.textContent = "That did not go through. Please call 724-968-8824 or email " + CONFIG.email + "."; });
       } else {
-        location.href = "mailto:" + CONFIG.email + "?subject=" + encodeURIComponent("Open House question from " + d.name) + "&body=" + encodeURIComponent("Name: " + d.name + "\nPhone: " + d.phone + "\nEmail: " + d.email + "\n\n" + d.message);
+        var body = Object.keys(d).map(function (k) { return (labels[k] || k) + ": " + d[k]; }).join("\n");
+        location.href = "mailto:" + CONFIG.email + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
         status.className = "form-status ok";
         status.textContent = "Your email app should open with the message filled in. If it does not, call 724-968-8824.";
       }
     });
-  }
+  });
   /* Cookie choice. Analytics (if a gaId is set) loads only after Accept. */
   var GA_ID = "";
   var store = {

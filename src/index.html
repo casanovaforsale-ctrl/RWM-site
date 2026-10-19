@@ -54,7 +54,7 @@
 
 <section class="band build" id="build">
   <div class="wrap">
-    <div class="head"><span class="kicker"><i></i>What I build for others</span><h2>Dashboards and websites, made to order</h2><p class="lede">The same tools I build for my own businesses, built for yours.</p></div>
+    <div class="head"><span class="kicker"><i></i>What I build for others</span><h2>Dashboards and websites, made to order</h2><p class="lede">The same tools I build for my own businesses, built for yours.</p><a class="btn btn-ghost" href="{{link:services/}}">See services and pricing →</a></div>
     <div class="bgrid">
       <article class="bcard">
         <div class="b-art dash" aria-hidden="true">
@@ -64,7 +64,7 @@
         <h3>Custom agent dashboards</h3>
         <p>One screen for the way you actually work: your leads, your follow-ups, your listings and your deadlines, pulled together and sorted for you. Built around your business, not a template.</p>
         <ul class="ticks"><li>Lead and follow-up tracking</li><li>Open house and listing activity in one view</li><li>AI that sorts and flags what needs you today</li><li>Your data stays yours, with export any time</li></ul>
-        <a class="btn" href="#contact">Ask about a dashboard</a>
+        <a class="btn" href="{{link:services/#dashboards}}">Dashboard prices</a>
       </article>
       <article class="bcard">
         <div class="b-art sites" aria-hidden="true">
@@ -76,7 +76,7 @@
         <p>Fast, hand-built websites with real animation, search set up properly and no trackers loading behind your visitors' backs. Every site on this page was built this way.</p>
         <ul class="ticks"><li>Designed around your brand, from scratch</li><li>Search-ready pages and Google business data</li><li>Cookie consent done right</li><li>Hosting with no monthly site-builder fees</li></ul>
         <div class="portfolio"><a href="https://casanovanjpa.com/">casanovanjpa.com</a><a href="https://zoomies.casanovanjpa.com/">zoomies.casanovanjpa.com</a></div>
-        <a class="btn" href="#contact">Ask about a website</a>
+        <a class="btn" href="{{link:services/#pricing}}">Website prices</a>
       </article>
     </div>
   </div>
@@ -144,14 +144,14 @@
       <h2>Get in touch</h2>
       <p class="lede">Agents asking about Open House: I read every one of these myself.</p>
     </div>
-    <form class="form" id="contact-form" novalidate>
+    <form class="form js-form" id="contact-form" data-subject="Open House question" novalidate>
       <label>Email<input type="email" name="email" placeholder="name@example.com" required autocomplete="email"></label>
       <label>Name<input type="text" name="name" placeholder="John Doe" required autocomplete="name"></label>
       <label>Phone<input type="tel" name="phone" placeholder="123-456-7890" autocomplete="tel"></label>
       <label>Message<textarea name="message" rows="5" placeholder="Enter your message here" required></textarea></label>
       <input class="hp" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
       <button class="btn" type="submit">Contact Us</button>
-      <p class="form-status" id="form-status" role="status"></p>
+      <p class="form-status" role="status"></p>
     </form>
   </div>
 </section>
